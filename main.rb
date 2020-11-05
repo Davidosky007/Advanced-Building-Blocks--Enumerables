@@ -139,7 +139,6 @@ module Enumerable
   end
 end
 
-
 # rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 def multiply_els(arr)
