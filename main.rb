@@ -1,13 +1,11 @@
 # rubocop: disable Metrics/ModuleLength
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+require_relative "test.rb"
+
 module Enumerable
   def my_each
-    return to_enum(:my_each) unless block_given?
-
-    arr = self if instance_of?(Array)
-    arr = to_a if instance_of?(Range)
-    arr = flatten if instance_of?(Hash)
-
+    arr = *self
+    return test.given_my_each unless block_given?
     counter = 0
     while counter < arr.length
       yield(arr[counter])
@@ -17,11 +15,9 @@ module Enumerable
   end
 
   def my_each_with_index
-    return to_enum(:my_each_with_index) unless block_given?
+    arr = *self
+    return test.given_my_each unless block_given?
 
-    arr = self if instance_of?(Array)
-    arr = to_a if instance_of?(Range)
-    arr = flatten if instance_of?(Hash)
     counter = 0
     while counter < arr.length
       yield(arr[counter], counter)
@@ -39,19 +35,9 @@ module Enumerable
   end
 
   def my_all?(args = nil)
-    if block_given?
-      my_each { |value| return false if yield(value) == false }
-      return true
-    elsif args.nil?
-      my_each { |v| return false if v.nil? || v == false }
-    elsif !args.nil? && (args.is_a? Class)
-      my_each { |v| return false if v.class != args }
-    elsif !args.nil? && args.instance_of?(Regexp)
-      my_each { |v| return false unless args.match(v) }
-    else
-      my_each { |v| return false if v != args }
-    end
-    true
+    value = *self
+    my_each { |value| return false if yield(value) == false } unless block_given?
+      return test.given_my_all(value)
   end
 
   def my_any?(arg = nil)
@@ -147,15 +133,15 @@ end
 # TEST AREA
 puts 'my_each_with_index'
 qq = [7, 8, 3, 1, 4, 8]
-qq.my_each_with_index do |_bv, ii|
+qq.my_each_with_index do |bv, ii|
   p ii
 end
 puts 'my_each'
 arry = [9, 2, 0, 3]
-arry.my_each { |n, _u| p n }
-puts 'my_each'
+arry.my_each { |n | p n }
+puts 'my_each_with_index'
 hash = { 'v1' => 'Uche', 'v2' => 'Anya' }
-hash.my_each { |u, _i| p u }
+hash.my_each_with_index { |u, i| p u }
 puts 'my_select'
 p [3, 5, 2, 1, 5, 6, 7].my_select do |n|
   n > 5
@@ -171,8 +157,8 @@ x.my_each do |i|
 end
 puts 'select'
 x = { 'v' => 'my name', 'g' => 'okoro dev' }
-x.my_each do |i, _u|
-  p i
+x.my_each_with_index do |i, u|
+  p u
 end
 puts 'my_all'
 p [1, 2, 3, 4].my_all? do |n|
@@ -191,9 +177,10 @@ p [2, 3, 4, 5, 6].my_none? do |n|
   n > 10
 end
 puts 'my_inject'
-p [2, 3, 4, 5].my_inject do |result, item|
-  result + item
+ [2, 3, 4, 5].my_inject do |result, item|
+ p result + item
+ 
 end
-p [2, 3, 4, 5].my_inject(0) { |result, item| result + item**2 }
+p [2, 3, 4, 5].my_inject { |result, item| result + item**2 }
 puts 'multiply_els'
 p multiply_els([2, 4, 5])
