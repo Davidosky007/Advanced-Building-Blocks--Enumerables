@@ -138,3 +138,63 @@ module Enumerable
     end
   end
 end
+
+
+# rubocop: enable Metrics/ModuleLength
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+def multiply_els(arr)
+  arr.my_inject { |memo, vals| memo * vals }
+end
+# TEST AREA
+puts 'my_each_with_index'
+qq = [7, 8, 3, 1, 4, 8]
+qq.my_each_with_index do |_bv, ii|
+  p ii
+end
+puts 'my_each'
+arry = [9, 2, 0, 3]
+arry.my_each { |n, _u| p n }
+puts 'my_each'
+hash = { 'v1' => 'Uche', 'v2' => 'Anya' }
+hash.my_each { |u, _i| p u }
+puts 'my_select'
+p [3, 5, 2, 1, 5, 6, 7].my_select do |n|
+  n > 5
+end
+puts 'my_each'
+x = [1, 2, 3, 4, 5, 7]
+x.my_each do |i|
+  if i.even?
+    p "this is the even numbers #{i}"
+  else
+    p "this is the odd numbers #{i}"
+  end
+end
+puts 'select'
+x = { 'v' => 'my name', 'g' => 'okoro dev' }
+x.my_each do |i, _u|
+  p i
+end
+puts 'my_all'
+p [1, 2, 3, 4].my_all? do |n|
+  n < 5
+end
+puts 'my_any'
+p [2, 3, 4, 5, 6].my_any? do |n|
+  n < 5
+end
+puts 'my_count'
+p [2, 3, 56, 6, 3, 2, 9, 1, 2, 3, 3, 5].my_count(3)
+puts 'my_map'
+p([2, 5, 7, 4, 2].my_map { |i| i + 8 })
+puts 'my_none'
+p [2, 3, 4, 5, 6].my_none? do |n|
+  n > 10
+end
+puts 'my_inject'
+p [2, 3, 4, 5].my_inject do |result, item|
+  result + item
+end
+p [2, 3, 4, 5].my_inject(0) { |result, item| result + item**2 }
+puts 'multiply_els'
+p multiply_els([2, 4, 5])
