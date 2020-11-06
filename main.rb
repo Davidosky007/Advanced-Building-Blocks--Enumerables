@@ -89,22 +89,22 @@ module Enumerable
 
   def my_inject(num = nil, sym = nil)
     if block_given?
+
       accumulator = num
-      my_each do |item|
-        accumulator = accumulator.nil? ? item : yield(accumulator, item)
-      end
+      my_each { |item| accumulator = accumulator.nil? ? item : yield(accumulator, item) } 
+
       accumulator
     elsif !num.nil? && (num.is_a?(Symbol) || num.is_a?(String))
+
       accumulator = nil
-      my_each do |item|
-        accumulator = accumulator.nil? ? item : accumulator.send(num, item)
-      end
+      my_each  { |item| accumulator = accumulator.nil? ? item : accumulator.send(num, item) } 
+
       accumulator
     elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
+
       accumulator = num
-      my_each do |item|
-        accumulator = accumulator.nil? ? item : accumulator.send(sym, item)
-      end
+      my_each { |item| accumulator = accumulator.nil? ? item : accumulator.send(sym, item) }
+
       accumulator
     end
   end
@@ -112,9 +112,11 @@ end
 
 # rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+
 def multiply_els(arr)
   arr.my_inject { |memo, vals| memo * vals }
 end
+
 # TEST AREA
 puts 'my_each_with_index'
 qq = [7, 8, 3, 1, 4, 8]
