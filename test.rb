@@ -60,9 +60,18 @@ when !block_given? && !arg.nil?
      my_any? { |i| return false if yield(i) }
     true
 end
-
 end
 
+ def self.my_given_for_inject(arr, arg)
+    if arg.size == 2
+      result = arg[0]
+      symbol = arg[1]
+    elsif arg.size == 1
+      symbol = arg[0]
+    end
+    arr.size.times { |index| result = result ? result.send(symbol, arr[index]) : arr[index] }
+    result
+  end
 
 
 

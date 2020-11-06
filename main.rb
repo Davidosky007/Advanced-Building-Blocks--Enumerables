@@ -88,6 +88,8 @@ module Enumerable
   end
 
   def my_inject(num = nil, sym = nil)
+    arr = *self
+    return Test.my_given_for_inject(arr, arg) unless block_given?
     if block_given?
 
       accumulator = num
