@@ -13,7 +13,7 @@ when Hash
 end
 end
 
-def given_my_all(value)
+def given_my_all(args = nil)
 
   case value
   when args == nil
@@ -26,6 +26,41 @@ def given_my_all(value)
      my_each { |v| return false if v != args }
 
   end 
+  true
+end
+
+def given_my_any(args = nil)
+  case value
+  when args == nil
+     my_each { |v| return true if v.nil? || v == true }
+  when !arg.nil? && (arg.is_a? Class)
+     my_each { |v| return true if v.instance_of?(arg) }
+  when !arg.nil? && arg.instance_of?(Regexp)
+     my_each { |v| return true if arg.match(v) }
+  else
+     my_each { |v| return true if v == arg }
+  end
+false
+end
+
+def given_my_none(arg = nil)
+case value
+when !block_given? && arg.nil?
+   my_each { |i| return true if i }
+      return false
+when !block_given? && !arg.nil?
+  arg.instance_of?(Regexp)
+        my_each { |i| return false if arg.match(i) }
+        return true
+    my_each { |i| return false if i == arg }
+      return true
+      arg.is_a?(Class)
+        my_each { |i| return false if i.instance_of?(arg) }
+        return true
+     my_any? { |i| return false if yield(i) }
+    true
+end
+
 end
 
 

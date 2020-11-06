@@ -5,7 +5,7 @@ require_relative "test.rb"
 module Enumerable
   def my_each
     arr = *self
-    return test.given_my_each unless block_given?
+    return Test.given_my_each unless block_given?
     counter = 0
     while counter < arr.length
       yield(arr[counter])
@@ -16,7 +16,7 @@ module Enumerable
 
   def my_each_with_index
     arr = *self
-    return test.given_my_each unless block_given?
+    return Test.given_my_each unless block_given?
 
     counter = 0
     while counter < arr.length
@@ -36,22 +36,22 @@ module Enumerable
 
   def my_all?(args = nil)
     value = *self
-    my_each { |value| return false if yield(value) == false } unless block_given?
-      return test.given_my_all(value)
+     return Test.given_my_all(value, args[0]) unless args.nil?
+      
+    if block_given?
+      value.my_each { |item| return false unless yield(item) }
+    else
+      value.my_each { |item| return false unless item }
+    end
+    true
   end
 
-  def my_any?(arg = nil)
-    if block_given?
-      my_each { |value| return true if yield(value) }
-      false
-    elsif arg.nil?
-      my_each { |v| return true if v.nil? || v == true }
-    elsif !arg.nil? && (arg.is_a? Class)
-      my_each { |v| return true if v.instance_of?(arg) }
-    elsif !arg.nil? && arg.instance_of?(Regexp)
-      my_each { |v| return true if arg.match(v) }
-    else
-      my_each { |v| return true if v == arg }
+  def my_any?(args = nil)
+    value = *self
+    return Test.given_my_any(value, args[0]) unless args == nil
+
+      if block_given?
+      value.my_any { |item| return true if yield(item) }
     end
     false
   end
@@ -60,7 +60,6 @@ module Enumerable
     array = instance_of?(Array) ? self : to_a
     return array.length unless block_given? || numbers
     return array.my_select { |value| value == numbers }.length if numbers
-
     array.my_select(&block).length
   end
 
@@ -77,29 +76,15 @@ module Enumerable
   end
 
   def my_none?(arg = nil)
-    if !block_given? && arg.nil?
-      my_each { |i| return true if i }
-      return false
+    value = *self
+     return Test.given_my_none(value, arg[0]) unless arg == nil
+
+   if block_given?
+      array.my_each { |item| return false if yield(item) }
+
     end
-
-    if !block_given? && !arg.nil?
-
-      if arg.is_a?(Class)
-        my_each { |i| return false if i.instance_of?(arg) }
-        return true
-      end
-
-      if arg.instance_of?(Regexp)
-        my_each { |i| return false if arg.match(i) }
-        return true
-      end
-
-      my_each { |i| return false if i == arg }
-      return true
-    end
-
-    my_any? { |i| return false if yield(i) }
     true
+   
   end
 
   def my_inject(num = nil, sym = nil)
