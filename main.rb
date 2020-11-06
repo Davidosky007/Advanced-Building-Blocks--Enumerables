@@ -1,11 +1,12 @@
-# rubocop: disable Metrics/ModuleLength
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-require_relative "test.rb"
+
+require_relative 'test'
 
 module Enumerable
   def my_each
     arr = *self
     return Test.given_my_each unless block_given?
+
     counter = 0
     while counter < arr.length
       yield(arr[counter])
@@ -36,8 +37,8 @@ module Enumerable
 
   def my_all?(args = nil)
     value = *self
-     return Test.given_my_all(value, args[0]) unless args.nil?
-      
+    return Test.given_my_all(value, args[0]) unless args.nil?
+
     if block_given?
       value.my_each { |item| return false unless yield(item) }
     else
@@ -48,9 +49,9 @@ module Enumerable
 
   def my_any?(args = nil)
     value = *self
-    return Test.given_my_any(value, args[0]) unless args == nil
+    return Test.given_my_any(value, args[0]) unless args.nil?
 
-      if block_given?
+    if block_given?
       value.my_any { |item| return true if yield(item) }
     end
     false
@@ -60,6 +61,7 @@ module Enumerable
     array = instance_of?(Array) ? self : to_a
     return array.length unless block_given? || numbers
     return array.my_select { |value| value == numbers }.length if numbers
+
     array.my_select(&block).length
   end
 
@@ -77,44 +79,41 @@ module Enumerable
 
   def my_none?(arg = nil)
     value = *self
-     return Test.given_my_none(value, arg[0]) unless arg == nil
+    return Test.given_my_none(value, arg[0]) unless arg.nil?
 
-   if block_given?
+    if block_given?
       array.my_each { |item| return false if yield(item) }
 
     end
     true
-   
   end
 
   def my_inject(num = nil, sym = nil)
-    arr = *self
-    return Test.my_given_for_inject(arr, arg) unless block_given?
+    raise LocalJumpError, 'no block given' unless block_given? || num.size.positive?
+
     if block_given?
-
       accumulator = num
-      my_each { |item| accumulator = accumulator.nil? ? item : yield(accumulator, item) } 
-
+      my_each do |item|
+        accumulator = accumulator.nil? ? item : yield(accumulator, item)
+      end
       accumulator
     elsif !num.nil? && (num.is_a?(Symbol) || num.is_a?(String))
-
       accumulator = nil
-      my_each  { |item| accumulator = accumulator.nil? ? item : accumulator.send(num, item) } 
-
+      my_each do |item|
+        accumulator = accumulator.nil? ? item : accumulator.send(num, item)
+      end
       accumulator
     elsif !sym.nil? && (sym.is_a?(Symbol) || sym.is_a?(String))
-
       accumulator = num
-      my_each { |item| accumulator = accumulator.nil? ? item : accumulator.send(sym, item) }
-
+      my_each do |item|
+        accumulator = accumulator.nil? ? item : accumulator.send(sym, item)
+      end
       accumulator
     end
   end
 end
 
-# rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-
 def multiply_els(arr)
   arr.my_inject { |memo, vals| memo * vals }
 end
@@ -122,15 +121,15 @@ end
 # TEST AREA
 puts 'my_each_with_index'
 qq = [7, 8, 3, 1, 4, 8]
-qq.my_each_with_index do |bv, ii|
+qq.my_each_with_index do |_bv, ii|
   p ii
 end
 puts 'my_each'
 arry = [9, 2, 0, 3]
-arry.my_each { |n | p n }
+arry.my_each { |n| p n }
 puts 'my_each_with_index'
 hash = { 'v1' => 'Uche', 'v2' => 'Anya' }
-hash.my_each_with_index { |u, i| p u }
+hash.my_each_with_index { |u, _i| p u }
 puts 'my_select'
 p [3, 5, 2, 1, 5, 6, 7].my_select do |n|
   n > 5
@@ -146,7 +145,7 @@ x.my_each do |i|
 end
 puts 'select'
 x = { 'v' => 'my name', 'g' => 'okoro dev' }
-x.my_each_with_index do |i, u|
+x.my_each_with_index do |_i, u|
   p u
 end
 puts 'my_all'
@@ -165,11 +164,10 @@ puts 'my_none'
 p [2, 3, 4, 5, 6].my_none? do |n|
   n > 10
 end
-puts 'my_inject'
- [2, 3, 4, 5].my_inject do |result, item|
- p result + item
- 
-end
-p [2, 3, 4, 5].my_inject { |result, item| result + item**2 }
+puts 'my_inject Array'
+p [5, 5, 7, 8].my_inject(1) { |result, item| result * item }
+
+p [2, 3, 4, 5].my_inject(1) { |result, item| result + item**2 }
+
 puts 'multiply_els'
 p multiply_els([2, 4, 5])

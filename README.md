@@ -7,7 +7,8 @@ This project is based on the Odin Project of Enumerable methods. We created our 
 
 
 ## About the Project
-In This Project  we Rebuild custom methods and make them do the same functions following best practices 
+In This Project  we Rebuild custom methods and make them do the same functions following best practices.
+code is written following the community Ruby Style Guide[![Ruby Style Guide](https://img.shields.io/badge/code_style-rubocop-brightgreen.svg)](https://github.com/rubocop-hq/rubocop)
 
 
 ## Built With
