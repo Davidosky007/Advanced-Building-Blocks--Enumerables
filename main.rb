@@ -5,7 +5,7 @@ require_relative 'test'
 module Enumerable
   def my_each
     arr = *self
-    return Test.given_my_each unless block_given?
+    return enum_for(:my_each) unless block_given?
 
     counter = 0
     while counter < arr.length
@@ -17,7 +17,7 @@ module Enumerable
 
   def my_each_with_index
     arr = *self
-    return Test.given_my_each unless block_given?
+    return enum_for(:my_each) unless block_given?
 
     counter = 0
     while counter < arr.length
@@ -52,7 +52,7 @@ module Enumerable
     return Test.given_my_any(value, args[0]) unless args.nil?
 
     if block_given?
-      value.my_any { |item| return true if yield(item) }
+      value.my_each { |item| return true if yield(item) }
     end
     false
   end
@@ -82,7 +82,7 @@ module Enumerable
     return Test.given_my_none(value, arg[0]) unless arg.nil?
 
     if block_given?
-      array.my_each { |item| return false if yield(item) }
+      value.my_each { |item| return false if yield(item) }
 
     end
     true
