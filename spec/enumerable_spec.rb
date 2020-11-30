@@ -1,4 +1,4 @@
-require '../main'
+require_relative '../main'
 
 describe Enumerable do
   let(:new_array) { [] }
@@ -39,6 +39,11 @@ describe Enumerable do
 
     it 'returns the same result the each method would when called on num_arr without a block' do
       expect(num_arr.my_each).to be_a(Enumerator)
+    end
+
+    it 'returns false if array is given false ' do
+      test_arr = [false]
+      expect(test_arr).to eql([false])
     end
   end
 
@@ -99,6 +104,14 @@ describe Enumerable do
       expect(result).to eql(true)
     end
 
+    it 'returns false if condition in block is not true for all the elements in the array' do
+      expect(%w[ant bear cat].my_all? { |word| word.length >= 4 }).to eql(false)
+    end
+
+    it 'returns false if any one of the element is nil/false in array' do
+      expect([nil, false, 9].my_all?).to eql(false)
+    end
+
     it 'returns the same result as all? method to range' do
       result = new_range.my_all?(&:even?)
       expect(result).to eql(false)
@@ -149,6 +162,10 @@ describe Enumerable do
 
       it 'returns the same result as any? method to empty_array without block' do
         expect(new_array.my_any?).to eql(false)
+      end
+
+      it 'returns false if any all of the element is nil/false in array' do
+        expect([nil, false, nil].my_any?).to eql(false)
       end
     end
 

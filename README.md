@@ -30,6 +30,14 @@ code is written following the community Ruby Style Guide[![Ruby Style Guide](htt
 - In your terminal run `ruby main.rb`
 - You are successful to get a local copy up and running.
 
+## Run tests
+
+- Clone the repo to your local folder
+- cd to the cloned folder
+- insatll Rspec by typing in the command line gem install rspec
+- run rspec 
+- 30 examples , 0 failures will be outputed
+
 ## Authors
 
 👤 **David Bassey**
